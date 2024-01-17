@@ -26,7 +26,7 @@ public class LibraryEventsController {
         //Implement KAFKA Producer
         if (ObjectUtils.isEmpty(libraryEvent.getLibraryEventId())) {
 
-            //let know user o consumer side, its a new data, insert in DB
+            //let user know on consumer side, it is a new data, insert in DB
             libraryEvent.setType(LibraryEventType.NEW);
 
             //sendLibraryEvent method is asynchronous in nature, as it depends on ListenableFuture in Kafka Template
