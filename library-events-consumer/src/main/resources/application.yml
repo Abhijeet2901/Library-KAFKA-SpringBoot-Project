@@ -1,0 +1,65 @@
+spring:
+  profiles:
+    active: local
+
+#topics:
+#  retry: 'library-events-RETRY'
+#  dlt: 'library-events-DELETE'
+
+---
+spring:
+  profiles: local
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: library-events-listener-group
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: School
+      authentication-database: admin
+      auto-index-creation: true
+---
+spring:
+  profiles: nonprod
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9095,localhost:9096,localhost:9097
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: library-events-listener-group
+      ssl:
+        # SSL Auth
+        trust-store-location: file:/Udemy/KAFKA/SSL/client.truststore.jks
+        trust-store-password: 123456
+        #key-store-location,password is provided for 2-way Auth
+        key-store-location: file:/Udemy/KAFKA/SSL/client.keystore.jks
+        key-store-password: 123456
+    properties:
+      security:
+        protocol: SSL
+      ssl.endpoint.identification.algorithm:
+    data:
+      mongodb:
+        host: localhost
+        port: 27017
+        database: School
+        authentication-database: admin
+        auto-index-creation: true
+---
+server:
+  port: 8081
+
+---
+#DB Config
+#spring:
+#  data:
+#    mongodb:
+#      host: localhost
+#      port: 27017
+#      database: School
+#      authentication-database: admin
+#      auto-index-creation: true
