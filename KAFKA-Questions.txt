@@ -1,0 +1,57 @@
+I have following questions regarding Kafka:
+
+Q- If I create a topic and specify no of partitions more than no of brokers, then a single broker will handle more than 1 partition?
+A- That is correct. If you have more partitions than available brokers, then some of your brokers will store more than one partition per topic.
+For example, let's assume you have one alive broker and a topic with two partitions; Your broker will look like below:
+    +-------------------+
+    |      Topic X      |
+    |    Partition 0    |
+    |                   |
+    |                   |
+    |     Topic X       |
+    |   Partition 1     |
+    +-------------------+
+
+Q-If I create a topic and specify replication factor more than no of brokers, will the topic create or not?
+A- No, it is not possible to create topic with higher replication factor than the available brokers. If you attempt to do it you will get an error.
+For example, let's say you are trying to create a topic with --replication-factor 3 and only one available broker:
+>> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic myTestTopic
+
+Error while executing topic command replication factor: 3 larger than available
+brokers: 1
+kafka.admin.AdminOperationException: replication factor: 3 larger than available
+ brokers: 1
+        at kafka.admin.AdminUtils$.assignReplicasToBrokers(AdminUtils.scala:70)
+        at kafka.admin.AdminUtils$.createTopic(AdminUtils.scala:171)
+        at kafka.admin.TopicCommand$.createTopic(TopicCommand.scala:93)
+        at kafka.admin.TopicCommand$.main(TopicCommand.scala:55)
+        at kafka.admin.TopicCommand.main(TopicCommand.scala)
+
+Q- Can a single broker will handle multiple partitions of different topic.
+A- Definitely. Let's say you have only 2 brokers and 3 topics each of which has 2 partitions with a replication-factor=1. An example overview of your brokers is shown below:
+    +-------------------+
+    |      Topic 1      |
+    |    Partition 0    |
+    |                   |
+    |                   |
+    |     Topic 3       |
+    |   Partition 1     |
+    |                   |
+    |                   |
+    |     Topic 2       |
+    |   Partition 1     |
+    +-------------------+
+
+
+    +-------------------+
+    |      Topic 1      |
+    |    Partition 1    |
+    |                   |
+    |                   |
+    |     Topic 3       |
+    |   Partition 0     |
+    |                   |
+    |                   |
+    |     Topic 2       |
+    |   Partition 0     |
+    +-------------------+

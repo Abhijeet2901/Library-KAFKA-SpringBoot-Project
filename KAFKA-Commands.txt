@@ -1,0 +1,59 @@
+Steps to start KAFKA (for version 2.2 and above) in local:
+
+1) Run Zookeeper in local
+
+zookeeper-server-start.bat ..\..\config\zookeeper.properties
+
+2) add additionalproperties in server.properties file
+
+listeners=PLAINTEXT://localhost:9092
+auto.create.topics.enable=false
+
+3) Run Broker(KAFKA Server) in local
+Broker-0
+kafka-server-start.bat ..\..\config\server.properties
+
+Broker-1
+kafka-server-start.bat ..\..\config\server-1.properties
+
+Broker-2
+kafka-server-start.bat ..\..\config\server-2.properties
+
+4) Create Topic
+
+kafka-topics.bat --create --topic test-topic --replication-factor 1 --partitions 4 --bootstrap-server localhost:9092
+
+4)List Topics in cluster
+
+kafka-topics.bat --bootstrap-server localhost:9092 --list
+
+
+5) Run Producer
+
+Without Key:
+
+kafka-console-producer.bat --broker-list localhost:9092 --topic test-topic
+
+With Key:
+
+kafka-console-producer.bat --broker-list localhost:9092 --topic test-topic --property "key.separator=-" --property "parse.key=true"
+
+pass value-> A-Apple (key-value)
+
+6)Run Consumer
+
+Without Key:
+
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test-topic --from-beginning
+
+With Key:
+
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test-topic --from-beginning -property "key.separator= - " --property "print.key=true"
+
+With Consumer Group:
+
+kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test-topic --group console-consumer-10410
+
+7) Consumer Groups list
+
+kafka-consumer-groups.bat --bootstrap-server localhost:9092 --list
