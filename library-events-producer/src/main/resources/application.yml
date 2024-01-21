@@ -16,6 +16,7 @@ spring:
     admin:
       properties:
         bootstrap.servers: localhost:9092,localhost:9093,localhost:9094
+
 #  admin setting is used to create topic from spring-boot app
 ---
 spring:
